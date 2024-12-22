@@ -40,6 +40,8 @@ export function AppSidebar() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("authToken");
+    localStorage.removeItem("role");
+    localStorage.removeItem("userName");
     navigate("/auth/login");
   };
 

@@ -1,8 +1,11 @@
+// context/authContext.tsx
+
 import React, { createContext, useContext, useState } from "react";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: () => void;
+  role: string | null; // Role management
+  login: (role: string) => void;
   logout: () => void;
 }
 
@@ -12,21 +15,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(
-    Boolean(localStorage.getItem("token")) // Periksa token di localStorage
+    Boolean(localStorage.getItem("token"))
   );
+  const [role, setRole] = useState<string | null>(localStorage.getItem("role"));
 
-  const login = () => {
+  const login = (role: string) => {
     setIsAuthenticated(true);
-    localStorage.setItem("token", "your-token-here"); // Simpan token saat login
+    setRole(role);
+    localStorage.setItem("token", "your-token-here"); // Simpan token yang valid
+    localStorage.setItem("role", role); // Simpan role di localStorage
   };
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem("token"); // Hapus token saat logout
+    setRole(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, role, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

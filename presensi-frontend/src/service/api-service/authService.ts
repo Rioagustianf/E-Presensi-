@@ -20,9 +20,10 @@ export const loginUser = async (email: string, password: string) => {
     if (response && response.data && response.data.token) {
       // Menyimpan token ke localStorage
       localStorage.setItem("authToken", response.data.token);
+      localStorage.setItem("role", response.data.role);
 
       console.log("Login successful:", response.data);
-      return { token: response.data.token }; // Mengembalikan objek dengan token
+      return { token: response.data.token, role: response.data.role }; // Mengembalikan objek dengan token
     } else {
       console.log("Login failed, no token found.");
       return null;
@@ -39,7 +40,8 @@ export const registerUser = async (
   password: string,
   passwordConfirmation: string,
   nis: string,
-  studentClass: string
+  studentClass: string,
+  homeroomTeacher: string // Menambahkan parameter homeroomTeacher
 ) => {
   try {
     // Validasi input
@@ -49,7 +51,8 @@ export const registerUser = async (
       !password ||
       !passwordConfirmation ||
       !nis ||
-      !studentClass
+      !studentClass ||
+      !homeroomTeacher // Pastikan wali kelas juga wajib diisi
     ) {
       console.log("All fields are required.");
       return null;
@@ -63,6 +66,7 @@ export const registerUser = async (
       password_confirmation: passwordConfirmation,
       nis,
       class: studentClass,
+      homeroom_teacher_id: homeroomTeacher, // Mengirimkan wali kelas
     });
 
     // Debugging response
@@ -98,6 +102,49 @@ export const getStudent = async () => {
     return response.data;
   } catch (error) {
     console.log("Error fetching user data:", error);
+    return null;
+  }
+};
+
+export const getHomeroomTeachers = async () => {
+  try {
+    const response = await axiosInstance.get("/api/homeroom-teachers");
+    return response.data;
+  } catch (error) {
+    console.log("Error fetching homeroom teachers:", error);
+    return [];
+  }
+};
+
+export const loginWaliKelas = async (email: string, password: string) => {
+  try {
+    if (!email || !password) {
+      console.log("Email or password is missing.");
+      return null;
+    }
+
+    // Mengirimkan request login wali kelas
+    const response = await axiosInstance.post("/api/login/wali-kelas", {
+      email,
+      password,
+    });
+
+    // Debugging response
+    console.log("Login response:", response);
+
+    // Jika login berhasil dan response berisi data token
+    if (response && response.data && response.data.token) {
+      // Menyimpan token ke localStorage
+      localStorage.setItem("authToken", response.data.token);
+
+      console.log("Login successful:", response.data);
+      return { token: response.data.token }; // Mengembalikan objek dengan token
+    } else {
+      console.log("Login failed, no token found.");
+      return null;
+    }
+  } catch (error) {
+    console.log("Error during login:", error);
     return null;
   }
 };

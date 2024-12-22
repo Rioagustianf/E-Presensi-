@@ -7,7 +7,7 @@ import { TabContentRekap } from "@/components/layouts/TabContentRekap";
 import { getStudent } from "@/service/api-service/authService";
 
 export const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState("rekap");
   const [student, setStudent] = useState([]);
 
   useEffect(() => {
@@ -40,12 +40,10 @@ export const Dashboard = () => {
             className="space-y-4"
           >
             <TabsList>
-              <TabsTrigger value="overview">Ikhtisar</TabsTrigger>
               <TabsTrigger value="rekap">Rekap</TabsTrigger>
               <TabsTrigger value="reports">Laporan</TabsTrigger>
             </TabsList>
             <TabListLayout value={activeTab}>
-              {activeTab === "overview" && <TabContentOverview />}
               {activeTab === "rekap" && <TabContentRekap studentId={student} />}
               {/* Konten tab lainnya jika ada */}
             </TabListLayout>

@@ -1,3 +1,5 @@
+// App.tsx
+
 import { Dashboard } from "./pages/dashboard/dashboard";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Login } from "./pages/auth/login";
@@ -8,6 +10,7 @@ import ProfilePage from "./pages/profile/EditProfile";
 import LandingPage from "./pages/LandingPage";
 import { AuthProvider } from "./context/authContext";
 import { ProtectedRoute } from "./hooks/protectedRoute";
+import WaliKelasDashboard from "./pages/dashboard/homeroomTeacher/WaliKelasDashboard";
 
 function App() {
   return (
@@ -18,8 +21,16 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute requiredRole="siswa">
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/walikelas"
+            element={
+              <ProtectedRoute requiredRole="walikelas">
+                <WaliKelasDashboard />
               </ProtectedRoute>
             }
           />

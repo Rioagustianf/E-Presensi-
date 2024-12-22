@@ -1,8 +1,9 @@
+import { useState, useEffect } from "react";
+import { registerUser } from "@/service/api-service/authService";
+import { getHomeroomTeachers } from "@/service/api-service/authService"; // Import untuk mengambil wali kelas
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { registerUser } from "@/service/api-service/authService";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 export const Register = () => {
@@ -12,9 +13,26 @@ export const Register = () => {
   const [nis, setNis] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [homeroomTeacher, setHomeroomTeacher] = useState(""); // State untuk wali kelas
+  const [teachers, setTeachers] = useState([]); // State untuk menyimpan data wali kelas
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Ambil data wali kelas ketika komponen pertama kali di-render
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const response = await getHomeroomTeachers();
+        console.log(response);
+        setTeachers(response); // Simpan data wali kelas
+      } catch (error) {
+        console.error("Error fetching homeroom teachers:", error);
+      }
+    };
+
+    fetchTeachers();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,12 +46,12 @@ export const Register = () => {
         password,
         passwordConfirm,
         nis,
-        kelas
+        kelas,
+        homeroomTeacher // Kirim wali kelas yang dipilih
       );
 
       if (response) {
         alert("Registrasi berhasil! Silakan login.");
-        // Redirect atau reset form sesuai kebutuhan
         navigate("/auth/login");
       } else {
         setError("Registrasi gagal. Cek data Anda dan coba lagi.");
@@ -54,6 +72,7 @@ export const Register = () => {
             <p className="text-gray-500 dark:text-gray-400">Buat akun baru</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Input Name */}
             <div className="space-y-2">
               <Label htmlFor="name">Nama Lengkap</Label>
               <Input
@@ -65,6 +84,7 @@ export const Register = () => {
                 required
               />
             </div>
+            {/* Input Kelas */}
             <div className="space-y-2">
               <Label htmlFor="kelas">Kelas</Label>
               <Input
@@ -75,6 +95,7 @@ export const Register = () => {
                 required
               />
             </div>
+            {/* Input NIS */}
             <div className="space-y-2">
               <Label htmlFor="nis">NIS</Label>
               <Input
@@ -85,6 +106,7 @@ export const Register = () => {
                 required
               />
             </div>
+            {/* Input Email */}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -96,6 +118,7 @@ export const Register = () => {
                 required
               />
             </div>
+            {/* Input Password */}
             <div className="space-y-2">
               <Label htmlFor="password">Kata Sandi</Label>
               <Input
@@ -106,6 +129,7 @@ export const Register = () => {
                 required
               />
             </div>
+            {/* Input Confirm Password */}
             <div className="space-y-2">
               <Label htmlFor="passwordConfirm">Konfirmasi Kata Sandi</Label>
               <Input
@@ -115,6 +139,23 @@ export const Register = () => {
                 onChange={(e) => setPasswordConfirm(e.target.value)}
                 required
               />
+            </div>
+            {/* Dropdown Wali Kelas */}
+            <div className="space-y-2">
+              <Label htmlFor="homeroomTeacher">Wali Kelas</Label>
+              <select
+                id="homeroomTeacher"
+                value={homeroomTeacher}
+                onChange={(e) => setHomeroomTeacher(e.target.value)}
+                required
+              >
+                <option value="">Pilih Wali Kelas</option>
+                {teachers.map((teacher: any) => (
+                  <option key={teacher.id} value={teacher.id}>
+                    {teacher.name}
+                  </option>
+                ))}
+              </select>
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>

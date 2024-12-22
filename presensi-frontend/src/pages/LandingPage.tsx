@@ -60,16 +60,16 @@ export default function LandingPage() {
       <main>
         <section className="bg-[#071952] min-h-screen text-white py-20 md:py-32">
           <div className="container mx-auto px-4">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="md:w-1/2 mb-10 md:mb-0">
+            <div className="flex  md:flex-row items-center justify-center">
+              <div className=" mb-10 md:mb-0">
                 <h1 className="text-4xl md:text-5xl font-bold mb-6">
                   Selamat Datang di E-Presensi SMA Putra Indonesia
                 </h1>
-                <p className="text-xl mb-8">
+                <p className="text-xl mb-8 text-center">
                   Sistem presensi digital untuk memudahkan pencatatan kehadiran
                   siswa.
                 </p>
-                <div className="space-x-4">
+                <div className="space-x-4 text-center">
                   <Button asChild>
                     <Link to="/auth/login">Masuk</Link>
                   </Button>
@@ -77,15 +77,6 @@ export default function LandingPage() {
                     <Link to="/auth/register">Daftar</Link>
                   </Button>
                 </div>
-              </div>
-              <div className="md:w-1/2">
-                <img
-                  src="https://placehold.co/600x400"
-                  alt="E-Presensi Illustration"
-                  width={400}
-                  height={400}
-                  className="rounded-lg shadow-lg"
-                />
               </div>
             </div>
           </div>
