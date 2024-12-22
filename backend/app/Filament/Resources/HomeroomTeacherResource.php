@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Models\Admin;
+use App\Filament\Resources\HomeroomTeacherResource\Pages;
+use App\Filament\Resources\HomeroomTeacherResource\RelationManagers;
 use App\Models\HomeroomTeacher;
 use App\Models\User;
 use Filament\Forms;
@@ -14,16 +14,21 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class HomeroomTeacherResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = HomeroomTeacher::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $modelLabel = 'Wali Kelas';
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->required(),
                 Forms\Components\TextInput::make('name')
                     ->required()
                     ->maxLength(255),
@@ -31,19 +36,6 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
-                Forms\Components\DateTimePicker::make('email_verified_at')
-                    ->default(now()),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'siswa' => 'Siswa',
-                        'wali_kelas' => 'Wali Kelas',
-                    ])
-                    ->required(),
             ]);
     }
 
@@ -55,10 +47,9 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('role'),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Teacher Name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -67,6 +58,9 @@ class UserResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+            ])
+            ->filters([
+                //
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -80,39 +74,17 @@ class UserResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            //
+        ];
     }
 
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListHomeroomTeachers::route('/'),
+            'create' => Pages\CreateHomeroomTeacher::route('/create'),
+            'edit' => Pages\EditHomeroomTeacher::route('/{record}/edit'),
         ];
     }
-
-    public static function updated(User $user): void
-    {
-        if ($user->role === 'admin' && !$user->admin) {
-            Admin::create([
-                'user_id' => $user->id,
-                'name' => $user->name,
-                'position' => 'default position',
-            ]);
-        }
-    }
-
-    public static function saved(User $user): void
-    {
-        if ($user->role === 'wali_kelas' && !$user->wali_kelas) {
-            // Pastikan user_id sudah ada pada tabel homeroom_teacher
-                HomeroomTeacher::create([
-                    'user_id' => $user->id,
-                    'name' => $user->name,
-                    'email' => $user->email,
-                ]);
-        }
-    }
 }
-

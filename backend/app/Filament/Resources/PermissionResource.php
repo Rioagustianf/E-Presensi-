@@ -10,6 +10,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Tables\Columns\LinkColumn;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -62,7 +64,32 @@ class PermissionResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('document')
-                    ->searchable(),
+                    ->label('Dokumen')
+                    ->extraAttributes(['class' => 'text-left'])
+                    ->formatStateUsing(function ($state) {
+                        if ($state) {
+                            // Ambil ekstensi file
+                            $fileExtension = pathinfo($state, PATHINFO_EXTENSION);
+                            $fileUrl = Storage::url('permissions/' . $state);
+    
+                            // Jika file adalah gambar
+                            if (in_array(strtolower($fileExtension), ['png', 'jpg', 'jpeg', 'gif', 'bmp', 'svg'])) {
+                                // Tampilkan link untuk membuka gambar di tab baru
+                                return '<a href="' . $fileUrl . '" target="_blank">Lihat Dokumen</a>';
+                            }
+                            // Jika file adalah PDF
+                            elseif (strtolower($fileExtension) === 'pdf') {
+                                // Tampilkan link untuk membuka PDF di tab baru
+                                return '<a href="' . $fileUrl . '" target="_blank">Lihat dokumen</a>';
+                            }
+                            // Untuk file lainnya
+                            else {
+                                return '<a href="' . $fileUrl . '" target="_blank">Lihat Dokumen</a>';
+                            }
+                        }
+                        return 'Tidak ada dokumen';
+                    })
+                    ->html(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

@@ -11,7 +11,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->get('/user', [UserController::class, 'show']);
 Route::post('/register', [AuthController::class, 'register']);
+Route::get('/homeroom-teachers', [AuthController::class, 'getHomeroomTeachers']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login/wali-kelas', [AuthController::class, 'loginWaliKelas']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::middleware('auth:sanctum')->get('/student', [StudentController::class, 'getStudent']);

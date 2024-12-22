@@ -14,6 +14,7 @@ class Student extends Model
         'nis',
         'name',
         'class',
+        'homeroom_teacher_id'
     ];
 
     public function user()
@@ -29,5 +30,10 @@ class Student extends Model
     public function permissions()
     {
         return $this->hasMany(Permission::class);
+    }
+
+    public function homeroomTeacher()
+    {
+        return $this->belongsTo(HomeroomTeacher::class);
     }
 }
