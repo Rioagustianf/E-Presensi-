@@ -24,5 +24,5 @@ Route::get('presences/{studentId}', [PresenceController::class, 'getStudentPrese
 Route::post('/permission', [PermisiionController::class, 'store']);
 Route::get('/permissions/{studentId}', [PermisiionController::class, 'getStudentPermissions']);
 
-Route::get('/homeroom-teachers', [HomeroomController::class, 'getHomeroomTeachers']);
-Route::get('/students/teacher/{teacherId}', [HomeroomController::class, 'getStudentsByTeacherId']);
+Route::get('/homeroom-teachers', [HomeroomController::class, 'getHomeroomTeachers'])->middleware('auth:sanctum');
+Route::get('/students/teacher/{teacherId}', [HomeroomController::class, 'getStudentsByTeacherId'])->middleware('auth:sanctum');

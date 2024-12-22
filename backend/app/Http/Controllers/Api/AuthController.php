@@ -114,7 +114,10 @@ class AuthController extends Controller
 
     // Jika validasi gagal, kembalikan error
     if ($validator->fails()) {
-        throw new ValidationException($validator);
+        return response()->json([
+            'message' => 'Validation error',
+            'errors' => $validator->errors(),
+        ], 422);
     }
 
     // Mencari pengguna berdasarkan email
@@ -140,7 +143,9 @@ class AuthController extends Controller
     // Return response dengan token
     return response()->json([
         'message' => 'Wali Kelas Login successful',
+        'user' => $user,
         'token' => $token
     ]);
 }
+
 }
