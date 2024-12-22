@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { registerUser } from "@/service/api-service/authService";
-import { getHomeroomTeachers } from "@/service/api-service/authService"; // Import untuk mengambil wali kelas
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Link, useNavigate } from "react-router-dom";
+import { getHomeroomTeachers } from "@/service/api-service/homeroomTeacherService";
 
 export const Register = () => {
   const [name, setName] = useState("");

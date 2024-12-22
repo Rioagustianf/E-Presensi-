@@ -13,16 +13,11 @@ export const loginUser = async (email: string, password: string) => {
       password,
     });
 
-    // Debugging response
-    console.log("Login response:", response);
-
     // Jika login berhasil dan response berisi data token
     if (response && response.data && response.data.token) {
       // Menyimpan token ke localStorage
       localStorage.setItem("authToken", response.data.token);
       localStorage.setItem("role", response.data.role);
-
-      console.log("Login successful:", response.data);
       return { token: response.data.token, role: response.data.role }; // Mengembalikan objek dengan token
     } else {
       console.log("Login failed, no token found.");
@@ -106,16 +101,7 @@ export const getStudent = async () => {
   }
 };
 
-export const getHomeroomTeachers = async () => {
-  try {
-    const response = await axiosInstance.get("/api/homeroom-teachers");
-    return response.data;
-  } catch (error) {
-    console.log("Error fetching homeroom teachers:", error);
-    return [];
-  }
-};
-
+// Update loginWaliKelas
 export const loginWaliKelas = async (email: string, password: string) => {
   try {
     if (!email || !password) {
@@ -123,28 +109,36 @@ export const loginWaliKelas = async (email: string, password: string) => {
       return null;
     }
 
-    // Mengirimkan request login wali kelas
+    // Mengirimkan request login
     const response = await axiosInstance.post("/api/login/wali-kelas", {
       email,
       password,
     });
 
-    // Debugging response
-    console.log("Login response:", response);
-
     // Jika login berhasil dan response berisi data token
-    if (response && response.data && response.data.token) {
+    if (response) {
       // Menyimpan token ke localStorage
       localStorage.setItem("authToken", response.data.token);
+      localStorage.setItem("role", response.data.role);
+      localStorage.setItem("userName", response.data.user.name);
 
-      console.log("Login successful:", response.data);
-      return { token: response.data.token }; // Mengembalikan objek dengan token
+      return { token: response.data.token, role: response.data.role }; // Mengembalikan objek dengan token
     } else {
       console.log("Login failed, no token found.");
       return null;
     }
   } catch (error) {
     console.log("Error during login:", error);
+    return null;
+  }
+};
+
+export const logOut = async () => {
+  try {
+    const response = await axiosInstance.post("/api/logout");
+    return response.data;
+  } catch (error) {
+    console.log("Error during logout:", error);
     return null;
   }
 };

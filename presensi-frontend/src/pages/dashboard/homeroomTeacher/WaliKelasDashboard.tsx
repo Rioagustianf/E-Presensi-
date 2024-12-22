@@ -18,12 +18,15 @@ import {
 } from "@/components/ui/table";
 import { Download, User, Calendar, Clock } from "lucide-react";
 import Navbar from "@/components/layouts/Navbar";
-import { getHomeroomTeachers } from "@/service/api-service/authService";
-import { getStudentByHomeroomTeacherId } from "@/service/api-service/homeroomTeacherService";
+import {
+  getHomeroomTeachers,
+  getStudentByHomeroomTeacherId,
+} from "@/service/api-service/homeroomTeacherService";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import Swal from "sweetalert2";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -53,7 +56,7 @@ const WaliKelasDashboard: React.FC = () => {
         const token = localStorage.getItem("authToken");
         if (token) {
           const response = await getHomeroomTeachers();
-          const homeroomTeacher = response[0];
+          const homeroomTeacher = response;
           setTeacher(homeroomTeacher);
 
           if (homeroomTeacher?.id) {
@@ -84,7 +87,7 @@ const WaliKelasDashboard: React.FC = () => {
 
   const downloadPDF = () => {
     if (!data || data.length === 0) {
-      alert("Tidak ada data untuk diunduh.");
+      Swal.fire("Warning", "Tidak ada data untuk diunduh", "warning");
       return;
     }
 

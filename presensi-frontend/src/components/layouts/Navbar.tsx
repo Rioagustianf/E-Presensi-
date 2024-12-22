@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { getHomeroomTeachers } from "@/service/api-service/authService";
+import { getHomeroomTeachers } from "@/service/api-service/homeroomTeacherService";
 
 const Navbar: React.FC = () => {
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ const Navbar: React.FC = () => {
         const token = localStorage.getItem("authToken");
         if (token) {
           const response = await getHomeroomTeachers();
-          setTeacher(response[0]);
+          setTeacher(response);
         } else {
           console.log("No token found in localStorage.");
         }
