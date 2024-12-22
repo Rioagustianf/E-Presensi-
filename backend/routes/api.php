@@ -22,3 +22,4 @@ Route::post('presensi', [PresenceController::class, 'store']);
 Route::get('presences/{studentId}', [PresenceController::class, 'getStudentPresences']);
 
 Route::post('/permission', [PermisiionController::class, 'store']);
+Route::get('/permissions/{studentId}', [PermisiionController::class, 'getStudentPermissions']);

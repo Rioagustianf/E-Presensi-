@@ -61,6 +61,20 @@ class PermisiionController extends Controller
         return response()->json($permission, 200);
     }
 
+    public function getStudentPermissions($studentId)
+    {
+        $permissions = Permission::with('student')
+            ->where('student_id', $studentId)
+            ->get();
+
+        if ($permissions->isEmpty()) {
+            return response()->json(['message' => 'No permissions found for this student'], 404);
+        }
+
+        return response()->json($permissions, 200);
+    }
+
+
     /**
      * Update the specified permission in storage.
      */
@@ -103,4 +117,5 @@ class PermisiionController extends Controller
 
         return response()->json(['message' => 'Permission deleted successfully'], 200);
     }
+
 }

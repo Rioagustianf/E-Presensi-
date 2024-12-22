@@ -114,7 +114,6 @@ class PresenceResource extends Resource
     {
         return [
             'index' => Pages\ListPresences::route('/'),
-            'create' => Pages\CreatePresence::route('/create'),
             'edit' => Pages\EditPresence::route('/{record}/edit'),
         ];
     }

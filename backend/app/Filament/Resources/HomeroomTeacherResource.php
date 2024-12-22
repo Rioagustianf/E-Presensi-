@@ -83,7 +83,6 @@ class HomeroomTeacherResource extends Resource
     {
         return [
             'index' => Pages\ListHomeroomTeachers::route('/'),
-            'create' => Pages\CreateHomeroomTeacher::route('/create'),
             'edit' => Pages\EditHomeroomTeacher::route('/{record}/edit'),
         ];
     }
