@@ -24,7 +24,6 @@ const Navbar: React.FC = () => {
         if (token) {
           const response = await getHomeroomTeachers();
           setTeacher(response[0]);
-          console.log("Teacher data:", response);
         } else {
           console.log("No token found in localStorage.");
         }
