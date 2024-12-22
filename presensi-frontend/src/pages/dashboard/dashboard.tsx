@@ -5,6 +5,7 @@ import { TabListLayout } from "@/components/layouts/TabList";
 import { TabContentOverview } from "@/components/layouts/TabContentOverview";
 import { TabContentRekap } from "@/components/layouts/TabContentRekap";
 import { getStudent } from "@/service/api-service/authService";
+import { TabContentReport } from "@/components/layouts/TabContentReport";
 
 export const Dashboard = () => {
   const [activeTab, setActiveTab] = useState("rekap");
@@ -45,6 +46,7 @@ export const Dashboard = () => {
             </TabsList>
             <TabListLayout value={activeTab}>
               {activeTab === "rekap" && <TabContentRekap studentId={student} />}
+              {activeTab === "reports" && <TabContentReport />}
               {/* Konten tab lainnya jika ada */}
             </TabListLayout>
           </Tabs>

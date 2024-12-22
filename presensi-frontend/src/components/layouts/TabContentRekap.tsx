@@ -8,12 +8,14 @@ import { UserCheck, UserX } from "lucide-react";
 import { fetchPresencesByStudentId } from "@/service/api-service/attendenceService";
 import { getStudent } from "@/service/api-service/authService";
 import { Loading } from "./Loading";
+import { GetStudentPermissions } from "@/service/api-service/permission";
 
 export const TabContentRekap = () => {
   const [presences, setPresences] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [student, setStudent] = useState<any>([]);
+  const [permission, setPermission] = useState<any[]>([]); // Perbarui tipe menjadi array
 
   const [totalPresentDays, setTotalPresentDays] = useState(0);
   const [totalAbsentDays, setTotalAbsentDays] = useState(0);
@@ -30,12 +32,11 @@ export const TabContentRekap = () => {
 
     const fetchStudent = async () => {
       try {
-        // Asumsi API bisa mengekstrak studentId dari token
-        const response = await getStudent(authToken); // Kirim token untuk mendapatkan data mahasiswa
-        console.log("Student data:", response);
-        const studentIdFromApi = response.id; // Asumsi API mengembalikan `id`
+        const response = await getStudent(authToken);
+        const studentIdFromApi = response.id;
         setStudent(response);
-        loadPresences(studentIdFromApi); // Ambil data presensi menggunakan studentId dari response API
+        loadPresences(studentIdFromApi);
+        loadPermission(studentIdFromApi);
       } catch (error) {
         console.error("Error fetching student:", error);
         setError("Gagal memuat data mahasiswa");
@@ -43,7 +44,7 @@ export const TabContentRekap = () => {
     };
 
     fetchStudent();
-  }, []); // Hanya dijalankan sekali saat komponen dimuat
+  }, []);
 
   const loadPresences = async (studentId: number) => {
     setLoading(true);
@@ -51,25 +52,25 @@ export const TabContentRekap = () => {
     try {
       const data = await fetchPresencesByStudentId(studentId);
       setPresences(data);
-
-      // Update statistik
       const presentDays = data.filter(
         (item: any) => item.status === "hadir"
       ).length;
-      const absentDays = data.filter(
-        (item: any) => item.status === "tidak_hadir"
-      ).length;
-      const leaveDays = data.filter(
-        (item: any) => item.status === "izin"
-      ).length;
-
       setTotalPresentDays(presentDays);
-      setTotalAbsentDays(absentDays);
-      setLeaveDaysTaken(leaveDays);
     } catch (err) {
       setError("Gagal memuat data presensi");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadPermission = async (studentId: number) => {
+    try {
+      const data = await GetStudentPermissions(studentId);
+      setPermission(data);
+      const permissionDays = data.length;
+      setTotalAbsentDays(permissionDays);
+    } catch (err) {
+      setError("Gagal memuat data izin");
     }
   };
 
@@ -98,14 +99,14 @@ export const TabContentRekap = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">
-                Total Absent Days
+                Jumlah Hari Tidak Hadir
               </CardTitle>
               <UserX className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{totalAbsentDays}</div>
               <p className="text-xs text-muted-foreground">
-                including weekends and holidays
+                termasuk akhir pekan dan hari libur
               </p>
             </CardContent>
           </Card>
@@ -119,7 +120,8 @@ export const TabContentRekap = () => {
             <AttendanceTable presences={presences} />
           </TabsContent>
           <TabsContent value="leave" className="space-y-4">
-            <LeaveTable presences={presences} />
+            {/* Kirim data permission ke LeaveTable */}
+            <LeaveTable permission={permission} />
           </TabsContent>
         </Tabs>
       </div>

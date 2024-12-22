@@ -1,4 +1,5 @@
 import { axiosInstance } from "@/lib/axios";
+import { useParams } from "react-router-dom";
 
 interface StorePermissionPayload {
   student_id: number;
@@ -28,5 +29,15 @@ export const createPermission = async (data: StorePermissionPayload) => {
       console.error("Error submitting permission:", error.message);
       throw error;
     }
+  }
+};
+
+export const GetStudentPermissions = async (studentId: number) => {
+  try {
+    const response = await axiosInstance.get(`/api/permissions/${studentId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching student permissions:", error);
+    throw error;
   }
 };

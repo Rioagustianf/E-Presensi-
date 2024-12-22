@@ -8,44 +8,30 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 
-export const LeaveTable = () => {
-  const leaveData = [
-    {
-      startDate: "2023-06-15",
-      endDate: "2023-06-17",
-      type: "Annual",
-      status: "Approved",
-    },
-    {
-      startDate: "2023-07-10",
-      endDate: "2023-07-10",
-      type: "Sick",
-      status: "Approved",
-    },
-    {
-      startDate: "2023-08-01",
-      endDate: "2023-08-03",
-      type: "Annual",
-      status: "Pending",
-    },
-  ];
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  // Simple date format (e.g., "12/12/2024")
+  return date.toLocaleDateString(); // To format as MM/DD/YYYY
+};
 
+export const LeaveTable = ({ permission }: { permission: any[] }) => {
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Start Date</TableHead>
-          <TableHead>End Date</TableHead>
-          <TableHead>Type</TableHead>
+          <TableHead>Date</TableHead>
+          <TableHead>Nama</TableHead>
+          <TableHead>Alasan</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {leaveData.map((record) => (
-          <TableRow key={record.startDate}>
-            <TableCell>{record.startDate}</TableCell>
-            <TableCell>{record.endDate}</TableCell>
-            <TableCell>{record.type}</TableCell>
+        {/* Menampilkan data izin yang diterima melalui props */}
+        {permission.map((record, index) => (
+          <TableRow key={index}>
+            <TableCell>{formatDate(record.created_at)}</TableCell>
+            <TableCell>{record.student.name}</TableCell>
+            <TableCell>{record.reason}</TableCell>
             <TableCell>
               <Badge
                 variant={record.status === "Approved" ? "success" : "warning"}
