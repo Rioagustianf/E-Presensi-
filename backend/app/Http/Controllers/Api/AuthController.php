@@ -62,13 +62,6 @@ class AuthController extends Controller
         ], 201);
     }
 
-    public function getHomeroomTeachers()
-{
-    // Ambil semua data wali kelas
-    $teachers = HomeroomTeacher::all();
-    return response()->json($teachers);
-}
-
     /**
      * Fungsi untuk login pengguna
      */

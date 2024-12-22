@@ -17,14 +17,14 @@ class HomeroomTeacher extends Model
     ];
 
     // Menetapkan nama tabel secara eksplisit
-    protected $table = 'homeroom_teacher'; // Sesuaikan dengan nama tabel yang ada di migrasi
+    protected $table = 'homeroom_teacher'; 
 
     /**
      * Relasi ke model Student
      */
     public function students()
     {
-        return $this->hasMany(Student::class);
+        return $this->hasMany(Student::class, 'homeroom_teacher_id');
     }
 
     public function user()

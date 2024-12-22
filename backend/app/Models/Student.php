@@ -34,6 +34,6 @@ class Student extends Model
 
     public function homeroomTeacher()
     {
-        return $this->belongsTo(HomeroomTeacher::class);
+        return $this->belongsTo(HomeroomTeacher::class, 'homeroom_teacher_id');
     }
 }
