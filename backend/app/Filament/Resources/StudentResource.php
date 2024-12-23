@@ -35,6 +35,7 @@ class StudentResource extends Resource
                     ->required()
                     ->maxLength(255),
                 Forms\Components\TextInput::make('class')
+                    ->label('Kelas')
                     ->required()
                     ->maxLength(255),
             ]);
@@ -52,6 +53,7 @@ class StudentResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('class')
+                    ->label('Kelas')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

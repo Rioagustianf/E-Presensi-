@@ -35,19 +35,19 @@ class HomeroomController extends Controller
     }
 
     public function getHomeroomTeachers(Request $request)
-    {
-        $user = $request->user()->id;
-        // Ambil semua data wali kelas
-        $teacher = HomeroomTeacher::where('user_id', $user)->first();
+{
+    // Ambil semua data wali kelas tanpa menggunakan autentikasi
+    $teachers = HomeroomTeacher::all();
 
-        if (!$teacher) {
-            return response()->json([
-                'message' => 'Wali kelas tidak ditemukan',
-            ], 404);
-        }
-
+    if ($teachers->isEmpty()) {
         return response()->json([
-            'data' => $teacher
-        ], 200);
+            'message' => 'Tidak ada wali kelas ditemukan',
+        ], 404);
     }
+
+    return response()->json([
+        'data' => $teachers
+    ], 200);
+}
+
 }

@@ -14,6 +14,11 @@ use Filament\Tables\Columns\LinkColumn;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportBulkAction;
+use pxlrbt\FilamentExcel\Actions\Tables\ExportAction;
+use pxlrbt\FilamentExcel\Exports\ExcelExport;
+use pxlrbt\FilamentExcel\Columns\Column;
+
 
 class PermissionResource extends Resource
 {
@@ -104,6 +109,13 @@ class PermissionResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+            ])
+            ->headerActions([
+                ExportAction::make('export')  // Menambahkan nama custom untuk tombol
+                ->label('Ekspor Data') // Mengubah nama tombol
+                ->exports([
+                    ExcelExport::make('table')->fromTable()
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
