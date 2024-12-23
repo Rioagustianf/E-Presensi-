@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Link, useNavigate } from "react-router-dom";
-import { getHomeroomTeachers } from "@/service/api-service/homeroomTeacherService";
+import { getHomeroomTeachersRegister } from "@/service/api-service/homeroomTeacherService";
 
 export const Register = () => {
   const [name, setName] = useState("");
@@ -29,7 +29,7 @@ export const Register = () => {
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
-        const response = await getHomeroomTeachers();
+        const response = await getHomeroomTeachersRegister();
         console.log(response);
         setTeachers(response);
       } catch (error) {

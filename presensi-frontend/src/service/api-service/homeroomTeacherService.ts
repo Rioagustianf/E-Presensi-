@@ -27,3 +27,13 @@ export const getHomeroomTeachers = async () => {
     return [];
   }
 };
+
+export const getHomeroomTeachersRegister = async () => {
+  try {
+    const response = await axiosInstance.get("/api/homeroom-teachers/register");
+    return response.data.data;
+  } catch (error) {
+    console.log("Error fetching homeroom teachers:", error);
+    return [];
+  }
+};

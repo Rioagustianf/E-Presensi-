@@ -6,7 +6,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { jsPDF } from "jspdf";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -27,6 +26,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import Swal from "sweetalert2";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import StudentPDF from "@/components/layouts/StudentPdf";
+import StudentCSV from "@/components/layouts/StudentCSV";
+import StudentXLSX from "@/components/layouts/StudentCSV";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -73,7 +76,6 @@ const WaliKelasDashboard: React.FC = () => {
     const fetchStudentData = async (homeroomTeacherId: number) => {
       try {
         const response = await getStudentByHomeroomTeacherId(homeroomTeacherId);
-        console.log("Student data:", response.data);
         setData(response.data);
         setLoading(false);
       } catch (error) {
@@ -84,76 +86,6 @@ const WaliKelasDashboard: React.FC = () => {
 
     fetchTeacher();
   }, []);
-
-  const downloadPDF = () => {
-    if (!data || data.length === 0) {
-      Swal.fire("Warning", "Tidak ada data untuk diunduh", "warning");
-      return;
-    }
-
-    const doc = new jsPDF();
-    doc.setFontSize(18);
-    doc.text("Laporan Absensi dan Izin", 20, 20);
-
-    let yOffset = 30; // Awal posisi vertikal
-
-    // Absensi Table
-    doc.setFontSize(14);
-    doc.text("Absensi:", 20, yOffset);
-    yOffset += 10;
-
-    doc.setFontSize(12);
-    doc.text("Tanggal", 20, yOffset);
-    doc.text("Waktu Check In", 80, yOffset);
-    doc.text("Status", 140, yOffset);
-    yOffset += 8;
-
-    data.forEach((siswa) => {
-      siswa.presences?.forEach((presence) => {
-        if (yOffset > 280) {
-          doc.addPage();
-          yOffset = 10;
-        }
-        doc.text(formatDate(presence.check_in), 20, yOffset);
-        doc.text(formatTime(presence.check_in), 80, yOffset);
-        doc.text(presence.status, 140, yOffset);
-        yOffset += 8;
-      });
-    });
-
-    // Adding spacing before the next section
-    yOffset += 10;
-    doc.setLineWidth(0.5);
-    doc.line(20, yOffset, 200, yOffset); // Line separator
-    yOffset += 10;
-
-    // Izin Table
-    doc.setFontSize(14);
-    doc.text("Izin:", 20, yOffset);
-    yOffset += 10;
-
-    doc.setFontSize(12);
-    doc.text("Tanggal", 20, yOffset);
-    doc.text("Alasan", 80, yOffset);
-    doc.text("Status", 140, yOffset);
-    yOffset += 8;
-
-    data.forEach((siswa) => {
-      siswa.permissions?.forEach((permission) => {
-        if (yOffset > 280) {
-          doc.addPage();
-          yOffset = 10;
-        }
-        doc.text(formatDate(permission.created_at), 20, yOffset);
-        doc.text(permission.reason.slice(0, 40), 80, yOffset); // Potong teks jika terlalu panjang
-        doc.text(permission.status, 140, yOffset);
-        yOffset += 8;
-      });
-    });
-
-    // Simpan PDF
-    doc.save("laporan_absensi_ijin.pdf");
-  };
 
   if (loading) {
     return (
@@ -184,9 +116,20 @@ const WaliKelasDashboard: React.FC = () => {
                 </h2>
                 <p className="text-gray-600">Total Siswa: {data.length}</p>
               </div>
-              <Button onClick={downloadPDF}>
-                <Download className="mr-2 h-4 w-4" /> Unduh Rekap
-              </Button>
+              <div className="space-x-2">
+                <PDFDownloadLink
+                  document={<StudentPDF teacher={teacher} students={data} />}
+                  fileName="rekap-siswa.pdf"
+                >
+                  {({ loading }) => (
+                    <Button disabled={loading}>
+                      <Download className="mr-2 h-4 w-4" />
+                      {loading ? "Mengunduh PDF..." : "Unduh PDF"}
+                    </Button>
+                  )}
+                </PDFDownloadLink>
+                <StudentXLSX teacher={teacher} students={data} />
+              </div>
             </div>
             <Tabs defaultValue="students" className="w-full">
               <TabsList className="grid w-full grid-cols-2 mb-4">
@@ -298,9 +241,9 @@ const WaliKelasDashboard: React.FC = () => {
                                     <TableCell>
                                       <Badge
                                         variant={
-                                          permission.status === "Approved"
+                                          permission.status === "Diterima"
                                             ? "success"
-                                            : "warning"
+                                            : "destructive"
                                         }
                                       >
                                         {permission.status}
@@ -312,12 +255,11 @@ const WaliKelasDashboard: React.FC = () => {
                             </Table>
                           ) : (
                             <p className="text-gray-500 italic">
-                              Belum ada data izin
+                              Belum ada izin
                             </p>
                           )}
                         </TabsContent>
                       </Tabs>
-                      <Separator className="my-4" />
                     </div>
                   ))}
                 </ScrollArea>
