@@ -50,7 +50,7 @@ export const WebcamCaptureCard: React.FC<WebcamCaptureCardProps> = ({
   return (
     <div className="card">
       <div className="card-header">
-        <h2>Foto Absensi</h2>
+        <h2>Foto Presensi</h2>
       </div>
       <div className="card-content">
         <div className="aspect-video rounded-lg overflow-hidden mb-4">

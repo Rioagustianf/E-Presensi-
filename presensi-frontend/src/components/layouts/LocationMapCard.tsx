@@ -18,7 +18,7 @@ export const LocationMapCard: React.FC<LocationMapCardProps> = ({
 }) => (
   <div className="card">
     <div className="card-header">
-      <h2>Lokasi Absensi</h2>
+      <h2>Lokasi Presensi</h2>
     </div>
     <div className="card-content">
       <div className="aspect-video rounded-lg overflow-hidden mb-4">

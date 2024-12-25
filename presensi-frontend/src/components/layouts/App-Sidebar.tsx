@@ -29,7 +29,7 @@ import { useUser } from "@/context/userContext";
 // Menu items.
 const items = [
   { url: "/dashboard", title: "Dashboard", icon: LayoutDashboard },
-  { url: "/dashboard/absensi", title: "Absensi", icon: CalendarCheck },
+  { url: "/dashboard/absensi", title: "Presensi", icon: CalendarCheck },
   { url: "/dashboard/permission", title: "Izin", icon: FileText },
 ];
 

@@ -141,6 +141,21 @@ export const Absensi: React.FC = () => {
       return;
     }
 
+    // // Mendapatkan waktu saat ini
+    // const currentTime = new Date();
+    // const currentHours = currentTime.getHours();
+    // const currentMinutes = currentTime.getMinutes();
+
+    // // Memeriksa apakah waktu saat ini berada di antara 07:00 dan 07:30
+    // if (currentHours !== 7 || currentMinutes < 0 || currentMinutes > 30) {
+    //   Swal.fire(
+    //     "Gagal Absensi",
+    //     "Absensi hanya dapat dilakukan antara jam 07:00 - 07:30.",
+    //     "error"
+    //   );
+    //   return;
+    // }
+
     const checkInDate = new Date().toISOString().replace("T", " ").slice(0, 19);
     const checkOutDate = new Date()
       .toISOString()
@@ -190,7 +205,7 @@ export const Absensi: React.FC = () => {
   return (
     <DashboarLayout title="Absensi | E-Presensi SMA Putra Indonesia">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Absensi</h1>
+        <h1 className="text-3xl font-bold mb-6">Presensi</h1>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <WebcamCaptureCard onCapture={handlePhotoCapture} />
           <LocationMapCard

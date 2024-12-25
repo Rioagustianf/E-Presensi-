@@ -159,12 +159,12 @@ export const TabContentReport = ({ studentId }: { studentId: number }) => {
     <>
       <Card className="w-full">
         <CardHeader>
-          <CardTitle>Laporan Absensi dan Izin</CardTitle>
+          <CardTitle>Laporan Presensi dan Izin</CardTitle>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="absensi" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="absensi">Absensi</TabsTrigger>
+              <TabsTrigger value="absensi">Presensi</TabsTrigger>
               <TabsTrigger value="izin">Izin</TabsTrigger>
             </TabsList>
             <TabsContent value="absensi">

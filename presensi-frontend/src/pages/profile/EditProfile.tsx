@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { User, Pencil, Save, ArrowBigLeft } from "lucide-react";
+import { useEffect, useState } from "react";
+import { User, Pencil, Save, ArrowBigLeft, User2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,37 +11,45 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
+import { getStudent } from "@/service/api-service/authService";
+import { editStudent } from "@/service/api-service/studentService";
+import Swal from "sweetalert2";
 
 export default function ProfilePage() {
   const [isEditing, setIsEditing] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "Budi Santoso",
-    nis: "12345678",
-    class: "XI IPA 2",
-    photoUrl: "/placeholder.svg?height=200&width=200",
-  });
+  const [student, setStudent] = useState({ name: "", nis: "", class: "" }); // Default values
+  const profile = <User2 />;
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+  useEffect(() => {
+    const fetchStudentData = async () => {
+      try {
+        const response = await getStudent(); // Fetch data profile
+        console.log("Student data:", response);
+        setStudent(response);
+      } catch (error) {
+        console.error("Error fetching student data:", error);
+      }
+    };
+
+    fetchStudentData();
+  }, []);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setStudent((prev) => ({ ...prev, [name]: value })); // Update state saat ada perubahan di input
   };
 
-  const handleClassChange = (value: string) => {
-    setProfile({ ...profile, class: value });
-  };
-
-  const handleSave = () => {
-    // Here you would typically send the updated profile to your backend
-    console.log("Saving profile:", profile);
-    setIsEditing(false);
+  const handleSave = async () => {
+    try {
+      await editStudent(student.nis, student.name, student.class); // Kirim data yang diperbarui ke backend
+      setIsEditing(false);
+      Swal.fire("Berhasil", "Profil berhasil diperbarui", "success");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      Swal.fire("Gagal", "Terjadi kesalahan saat memperbarui profil", "error");
+    }
   };
 
   return (
@@ -58,25 +66,11 @@ export default function ProfilePage() {
         <CardContent className="space-y-6">
           <div className="flex flex-col items-center space-y-4">
             <Avatar className="w-32 h-32">
-              <AvatarImage src={profile.photoUrl} alt={profile.name} />
+              <AvatarImage src={profile} alt={profile} />
               <AvatarFallback>
                 <User className="w-16 h-16" />
               </AvatarFallback>
             </Avatar>
-            {isEditing && (
-              <div className="relative inline-block">
-                <Button className="bg-[#071952]" asChild>
-                  <label htmlFor="file-upload" className="cursor-pointer">
-                    Upload File
-                  </label>
-                </Button>
-                <input
-                  id="file-upload"
-                  type="file"
-                  className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                />
-              </div>
-            )}
           </div>
           <div className="grid gap-4">
             <div className="grid gap-2">
@@ -84,8 +78,8 @@ export default function ProfilePage() {
               <Input
                 id="name"
                 name="name"
-                value={profile.name}
-                onChange={handleInputChange}
+                value={student.name}
+                onChange={handleChange}
                 readOnly={!isEditing}
               />
             </div>
@@ -94,33 +88,20 @@ export default function ProfilePage() {
               <Input
                 id="nis"
                 name="nis"
-                value={profile.nis}
-                onChange={handleInputChange}
+                value={student.nis}
+                onChange={handleChange}
                 readOnly={!isEditing}
               />
             </div>
             <div className="grid gap-2">
               <Label htmlFor="class">Kelas</Label>
-              {isEditing ? (
-                <Select
-                  onValueChange={handleClassChange}
-                  defaultValue={profile.class}
-                >
-                  <SelectTrigger id="class">
-                    <SelectValue placeholder="Pilih kelas" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="X IPA 1">X IPA 1</SelectItem>
-                    <SelectItem value="X IPA 2">X IPA 2</SelectItem>
-                    <SelectItem value="XI IPA 1">XI IPA 1</SelectItem>
-                    <SelectItem value="XI IPA 2">XI IPA 2</SelectItem>
-                    <SelectItem value="XII IPA 1">XII IPA 1</SelectItem>
-                    <SelectItem value="XII IPA 2">XII IPA 2</SelectItem>
-                  </SelectContent>
-                </Select>
-              ) : (
-                <Input id="class" value={profile.class} readOnly />
-              )}
+              <Input
+                id="class"
+                name="class"
+                value={student.class}
+                onChange={handleChange}
+                readOnly={!isEditing}
+              />
             </div>
           </div>
         </CardContent>
