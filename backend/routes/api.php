@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\PermisiionController;
 use App\Http\Controllers\Api\PresenceController;
 use App\Http\Controllers\Api\StudentController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Resources\Api\Student;
 use Filament\Forms\Get;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -27,3 +28,5 @@ Route::get('/permissions/{studentId}', [PermisiionController::class, 'getStudent
 Route::get('/homeroom-teachers', [HomeroomController::class, 'getHomeroomTeachers'])->middleware('auth:sanctum');
 Route::get('/homeroom-teachers/register', [HomeroomController::class, 'getHomeroomTeachersRegister']);
 Route::get('/students/teacher/{teacherId}', [HomeroomController::class, 'getStudentsByTeacherId'])->middleware('auth:sanctum');
+
+Route::put('/update-student', [StudentController::class, 'updateStudent'])->middleware('auth:sanctum');

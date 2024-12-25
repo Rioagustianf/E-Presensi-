@@ -30,4 +30,30 @@ class StudentController extends Controller
             'class' => $student->class,
         ], 200);
     }
+
+    public function updateStudent(Request $request){
+        // Mendapatkan student berdasarkan user_id (misalnya user yang sedang login)
+        $userId = $request->user()->id;
+
+        // Mencari student berdasarkan user_id
+        $student = Student::where('user_id', $userId)->first();
+
+        if (!$student) {            
+            return response()->json([
+                'message' => 'Student not found.'
+            ], 404);
+        }
+
+        $student->nis = $request->nis;
+        $student->name = $request->name;
+        $student->class = $request->class;
+        $student->save();
+
+        return response()->json([
+            'id' => $student->id,
+            'nis' => $student->nis,
+            'name' => $student->name,
+            'class' => $student->class,
+        ], 200);
+    }
 }
