@@ -30,6 +30,7 @@ import { PDFDownloadLink } from "@react-pdf/renderer";
 import StudentPDF from "@/components/layouts/StudentPdf";
 import StudentCSV from "@/components/layouts/StudentCSV";
 import StudentXLSX from "@/components/layouts/StudentCSV";
+import LogoLoader from "@/components/layouts/Logo-Loader";
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -88,11 +89,7 @@ const WaliKelasDashboard: React.FC = () => {
   }, []);
 
   if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
-      </div>
-    );
+    return <LogoLoader />;
   }
 
   return (

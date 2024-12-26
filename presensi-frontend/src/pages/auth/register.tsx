@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Link, useNavigate } from "react-router-dom";
 import { getHomeroomTeachersRegister } from "@/service/api-service/homeroomTeacherService";
+import Swal from "sweetalert2";
 
 export const Register = () => {
   const [name, setName] = useState("");
@@ -57,7 +58,7 @@ export const Register = () => {
       );
 
       if (response) {
-        alert("Registrasi berhasil! Silakan login.");
+        Swal.fire("Berhasil", "Registrasi berhasil", "success");
         navigate("/auth/login");
       } else {
         setError("Registrasi gagal. Cek data Anda dan coba lagi.");

@@ -36,7 +36,11 @@ export const GetStudentPermissions = async (studentId: number) => {
   try {
     const response = await axiosInstance.get(`/api/permissions/${studentId}`);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
+    if (error.response && error.response.status === 404) {
+      console.warn(`No permissions found for student ID ${studentId}`);
+      return []; // Kembalikan array kosong jika tidak ada data
+    }
     console.error("Error fetching student permissions:", error);
     throw error;
   }

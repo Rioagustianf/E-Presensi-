@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { getStudent } from "@/service/api-service/authService";
+import LogoLoader from "@/components/layouts/Logo-Loader";
 
 // Membuat context
 const UserContext = createContext<any>(null);
@@ -42,7 +43,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
   // Menampilkan loading saat menunggu data
   if (loading) {
-    return <div>Loading...</div>; // Anda bisa menyesuaikan dengan tampilan loading yang diinginkan
+    return <LogoLoader />; // Anda bisa menyesuaikan dengan tampilan loading yang diinginkan
   }
 
   return <UserContext.Provider value={user}>{children}</UserContext.Provider>;

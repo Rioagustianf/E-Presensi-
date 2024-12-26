@@ -15,6 +15,9 @@ const formatDate = (dateString: string) => {
 };
 
 export const LeaveTable = ({ permission }: { permission: any[] }) => {
+  // Validasi data izin
+  const permissions = permission && permission.length > 0 ? permission : [];
+
   return (
     <Table>
       <TableHeader>
@@ -26,21 +29,28 @@ export const LeaveTable = ({ permission }: { permission: any[] }) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {/* Menampilkan data izin yang diterima melalui props */}
-        {permission.map((record, index) => (
-          <TableRow key={index}>
-            <TableCell>{formatDate(record.created_at)}</TableCell>
-            <TableCell>{record.student.name}</TableCell>
-            <TableCell>{record.reason}</TableCell>
-            <TableCell>
-              <Badge
-                variant={record.status === "Approved" ? "success" : "warning"}
-              >
-                {record.status}
-              </Badge>
+        {permissions.length > 0 ? (
+          permissions.map((record, index) => (
+            <TableRow key={index}>
+              <TableCell>{formatDate(record.created_at)}</TableCell>
+              <TableCell>{record.student.name}</TableCell>
+              <TableCell>{record.reason}</TableCell>
+              <TableCell>
+                <Badge
+                  variant={record.status === "Approved" ? "success" : "warning"}
+                >
+                  {record.status}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={4} style={{ textAlign: "center" }}>
+              Data izin belum ada.
             </TableCell>
           </TableRow>
-        ))}
+        )}
       </TableBody>
     </Table>
   );
