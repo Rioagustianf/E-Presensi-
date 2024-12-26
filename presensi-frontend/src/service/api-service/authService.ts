@@ -36,10 +36,9 @@ export const registerUser = async (
   passwordConfirmation: string,
   nis: string,
   studentClass: string,
-  homeroomTeacher: string // Menambahkan parameter homeroomTeacher
+  homeroomTeacher: string
 ) => {
   try {
-    // Validasi input
     if (
       !name ||
       !email ||
@@ -47,13 +46,11 @@ export const registerUser = async (
       !passwordConfirmation ||
       !nis ||
       !studentClass ||
-      !homeroomTeacher // Pastikan wali kelas juga wajib diisi
+      !homeroomTeacher
     ) {
-      console.log("All fields are required.");
-      return null;
+      throw new Error("All fields are required.");
     }
 
-    // Mengirimkan request registrasi
     const response = await axiosInstance.post("/api/register", {
       name,
       email,
@@ -61,26 +58,15 @@ export const registerUser = async (
       password_confirmation: passwordConfirmation,
       nis,
       class: studentClass,
-      homeroom_teacher_id: homeroomTeacher, // Mengirimkan wali kelas
+      homeroom_teacher_id: homeroomTeacher,
     });
 
-    // Debugging response
-    console.log("Registration response:", response);
-
-    // Jika berhasil, mengembalikan response
-    if (response && response.data) {
-      console.log("Registration successful:", response.data);
-      return response.data;
-    } else {
-      console.log("Registration failed.");
-      return null;
+    return response.data;
+  } catch (error: any) {
+    if (error.response?.data) {
+      throw error.response.data; // Kirimkan pesan error spesifik dari API
     }
-  } catch (error) {
-    console.log(
-      "Error during registration:",
-      error.response?.data || error.message
-    );
-    return null;
+    throw new Error(error.message || "Registration failed.");
   }
 };
 

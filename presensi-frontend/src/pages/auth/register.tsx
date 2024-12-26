@@ -15,56 +15,64 @@ import { getHomeroomTeachersRegister } from "@/service/api-service/homeroomTeach
 import Swal from "sweetalert2";
 
 export const Register = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [kelas, setKelas] = useState("");
-  const [nis, setNis] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [homeroomTeacher, setHomeroomTeacher] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    kelas: "",
+    nis: "",
+    password: "",
+    passwordConfirm: "",
+    homeroomTeacher: "",
+  });
+
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [errors, setErrors] = useState<any>({});
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
         const response = await getHomeroomTeachersRegister();
-        console.log(response);
         setTeachers(response);
       } catch (error) {
         console.error("Error fetching homeroom teachers:", error);
       }
     };
-
     fetchTeachers();
   }, []);
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+    setErrors({ ...errors, [e.target.id]: "" }); // Reset error untuk field ini
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setErrors({});
 
     try {
-      const response = await registerUser(
-        name,
-        email,
-        password,
-        passwordConfirm,
-        nis,
-        kelas,
-        homeroomTeacher
+      await registerUser(
+        formData.name,
+        formData.email,
+        formData.password,
+        formData.passwordConfirm,
+        formData.nis,
+        formData.kelas,
+        formData.homeroomTeacher
       );
 
-      if (response) {
-        Swal.fire("Berhasil", "Registrasi berhasil", "success");
-        navigate("/auth/login");
+      Swal.fire("Berhasil", "Registrasi berhasil", "success");
+      navigate("/auth/login");
+    } catch (err: any) {
+      if (err.errors) {
+        setErrors(err.errors); // Set pesan error dari API
       } else {
-        setError("Registrasi gagal. Cek data Anda dan coba lagi.");
+        Swal.fire("Gagal", err.message || "Registrasi gagal", "error");
       }
-    } catch (err) {
-      setError("Terjadi kesalahan saat registrasi. Silakan coba lagi.");
     } finally {
       setLoading(false);
     }
@@ -76,83 +84,64 @@ export const Register = () => {
         <div className="mx-auto w-full max-w-md space-y-6 p-6 bg-white rounded-xl shadow-md">
           <div className="space-y-2 text-center">
             <h1 className="text-3xl font-bold">Daftar</h1>
-            <p className="text-gray-500 dark:text-gray-400">Buat akun baru</p>
+            <p className="text-gray-500">Buat akun baru</p>
           </div>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Nama Lengkap</Label>
-              <Input
-                id="name"
-                type="text"
-                placeholder="John Doe"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="kelas">Kelas</Label>
-              <Input
-                id="kelas"
-                type="text"
-                value={kelas}
-                onChange={(e) => setKelas(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="nis">NIS</Label>
-              <Input
-                id="nis"
-                type="text"
-                value={nis}
-                onChange={(e) => setNis(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="nama@sekolah.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Kata Sandi</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="passwordConfirm">Konfirmasi Kata Sandi</Label>
-              <Input
-                id="passwordConfirm"
-                type="password"
-                value={passwordConfirm}
-                onChange={(e) => setPasswordConfirm(e.target.value)}
-                required
-              />
-            </div>
+            {[
+              {
+                id: "name",
+                label: "Nama Lengkap",
+                type: "text",
+                placeholder: "John Doe",
+              },
+              { id: "kelas", label: "Kelas", type: "text", placeholder: "" },
+              { id: "nis", label: "NIS", type: "text", placeholder: "" },
+              {
+                id: "email",
+                label: "Email",
+                type: "email",
+                placeholder: "nama@sekolah.com",
+              },
+              {
+                id: "password",
+                label: "Kata Sandi",
+                type: "password",
+                placeholder: "",
+              },
+              {
+                id: "passwordConfirm",
+                label: "Konfirmasi Kata Sandi",
+                type: "password",
+                placeholder: "",
+              },
+            ].map((field) => (
+              <div key={field.id} className="space-y-2">
+                <Label htmlFor={field.id}>{field.label}</Label>
+                <Input
+                  id={field.id}
+                  type={field.type}
+                  placeholder={field.placeholder}
+                  value={formData[field.id]}
+                  onChange={handleChange}
+                  required
+                />
+                {errors[field.id] && (
+                  <p className="text-red-500 text-sm">{errors[field.id]}</p>
+                )}
+              </div>
+            ))}
             <div className="space-y-2">
               <Label htmlFor="homeroomTeacher">Wali Kelas</Label>
               <Select
-                value={homeroomTeacher}
-                onValueChange={(value) => setHomeroomTeacher(value)}
+                value={formData.homeroomTeacher}
+                onValueChange={(value) =>
+                  setFormData({ ...formData, homeroomTeacher: value })
+                }
               >
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder="Pilih Wali Kelas" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="none">Pilih Wali Kelas</SelectItem>{" "}
-                  {/* Use a non-empty string */}
                   {teachers.map((teacher: any) => (
                     <SelectItem key={teacher.id} value={teacher.id.toString()}>
                       {teacher.name}
@@ -160,8 +149,10 @@ export const Register = () => {
                   ))}
                 </SelectContent>
               </Select>
+              {errors.homeroomTeacher && (
+                <p className="text-red-500 text-sm">{errors.homeroomTeacher}</p>
+              )}
             </div>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Memproses..." : "Daftar"}
             </Button>
