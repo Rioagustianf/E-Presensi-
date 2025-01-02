@@ -7,6 +7,8 @@ import { getStudent } from "@/service/api-service/authService";
 import { CheckCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
 const schoolLatitude = -6.914744;
 const schoolLongitude = 107.613918;
@@ -156,11 +158,12 @@ export const Absensi: React.FC = () => {
     //   return;
     // }
 
-    const checkInDate = new Date().toISOString().replace("T", " ").slice(0, 19);
-    const checkOutDate = new Date()
-      .toISOString()
-      .replace("T", " ")
-      .slice(0, 19);
+    const checkInDate = format(new Date(), "yyyy-MM-dd HH:mm:ss", {
+      locale: id,
+    });
+    const checkOutDate = format(new Date(), "yyyy-MM-dd HH:mm:ss", {
+      locale: id,
+    });
 
     if (studentId && location && isWithinSchoolRadius !== null) {
       const attendanceData = {
